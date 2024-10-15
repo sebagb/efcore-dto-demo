@@ -1,32 +1,31 @@
-﻿namespace EFCore.Domain.VehicleManagement
+﻿using EFCore.Domain.VehicleManagement.Exceptions;
+using System.Text.RegularExpressions;
+
+namespace EFCore.Domain.VehicleManagement;
+
+public record Vin(string value)
 {
-    using EFCore.Domain.VehicleManagement.Exceptions;
-    using System.Text.RegularExpressions;
+    private static Regex VinValidationRegex = new Regex("[A-HJ-NPR-Z0-9]{17}");
 
-    public record Vin(string value)
+    public static Vin Create(string value)
     {
-        private static Regex VinValidationRegex = new Regex("[A-HJ-NPR-Z0-9]{17}");
-
-        public static Vin Create(string value)
+        if (!IsValid(value))
         {
-            if (!IsValid(value))
-            {
-                throw new InvalidVinException();
-            }
-            return new Vin(value);
+            throw new InvalidVinException();
         }
-
-        public static bool TryCreate(string value, out Vin? vin)
-        {
-            if (!IsValid(value))
-            {
-                vin = null;
-                return false;
-            }
-            vin = new Vin(value);
-            return true;
-        }
-
-        private static bool IsValid(string value) => VinValidationRegex.IsMatch(value);
+        return new Vin(value);
     }
+
+    public static bool TryCreate(string value, out Vin? vin)
+    {
+        if (!IsValid(value))
+        {
+            vin = null;
+            return false;
+        }
+        vin = new Vin(value);
+        return true;
+    }
+
+    private static bool IsValid(string value) => VinValidationRegex.IsMatch(value);
 }
