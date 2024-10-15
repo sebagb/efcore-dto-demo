@@ -26,5 +26,7 @@
             vin = new Vin(value);
             return true;
         }
+
+        private static bool IsValid(string value) => VinValidationRegex.IsMatch(value);
     }
 }
